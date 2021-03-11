@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import { get, chunk, sumBy, max, uniq, isNil } from 'lodash';
 import { Box, Flex, Image } from 'rebass/styled-components';
 import moment from 'moment';
@@ -55,8 +55,8 @@ export class Receipt extends React.Component {
       host: PropTypes.shape({
         slug: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
-        website: PropTypes.string.isRequired,
-        image: PropTypes.string.isRequired,
+        website: PropTypes.string,
+        image: PropTypes.string,
       }),
       transactions: PropTypes.arrayOf(
         PropTypes.shape({
@@ -77,7 +77,6 @@ export class Receipt extends React.Component {
     debug: PropTypes.bool,
     /** CSS zoom applied */
     zoom: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    intl: PropTypes.object.isRequired, // from withIntl
   };
 
   static defaultProps = {
@@ -163,7 +162,7 @@ export class Receipt extends React.Component {
     return uniq(taxIdNumbers).map((number) => <P key={number}>{number}</P>);
   }
 
-  /** Get a description for transaction, with a mention to virtual card emitter if necessary */
+  /** Get a description for transaction, with a mention to gift card emitter if necessary */
   transactionDescription(transaction) {
     const targetCollective = getTransactionReceiver(transaction);
     const transactionDescription = (
@@ -172,7 +171,7 @@ export class Receipt extends React.Component {
       </LinkToCollective>
     );
 
-    return !transaction.usingVirtualCardFromCollective ? (
+    return !transaction.usingGiftCardFromCollective ? (
       transactionDescription
     ) : (
       <div>
@@ -216,7 +215,7 @@ export class Receipt extends React.Component {
 
             return (
               <tr key={transaction.id}>
-                <Td fontSize="11px">
+                <Td fontSize="11px" css={{ whiteSpace: 'nowrap' }}>
                   <CustomIntlDate date={new Date(transaction.createdAt)} />
                 </Td>
                 <Td fontSize="11px">{this.transactionDescription(transaction)}</Td>
@@ -392,4 +391,4 @@ export class Receipt extends React.Component {
   }
 }
 
-export default injectIntl(Receipt);
+export default Receipt;
